@@ -1,3 +1,5 @@
+//Importando expres y mongoose
+const usuarios = require('./routes/usuarios');
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -7,6 +9,12 @@ mongoose.connect('mongodb://localhost:27017/curisos', {useNewUrlParser: true, us
     .catch(err => console.log('No se logro conectar con MongoDB', err));
 
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use('/api/usarios', usuarios);
+
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
