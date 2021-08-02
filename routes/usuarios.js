@@ -4,11 +4,12 @@ const Usuario = require('../models/usuario_model');
 const ruta = express.Router();
 
 
-
+// GET
 ruta.get('/',(req, res) => {
     res.json('Listo Get de Usarios');
 });
 
+//POST
 ruta.post('/', (req, res) => {
     let body = req.body;
     let resultado = crearUsuario(body);
@@ -24,16 +25,26 @@ ruta.post('/', (req, res) => {
     });
 });
 
+//PUT
 ruta.put('/:id', (req, res) => {
     let resultado = actulizarUsuario(req.params.id, req.body);
     resultado.then(user => {
         res.json(user)
     }).catch(err => {
-        res.status(400)-json(err)
+        res.status(400).json(err)
+    })
+})
+//DELETE
+ruta.delete('/:id', (req, res) => {
+    let resultado = eliminarUsario(req.params.id, req.body);
+    resultado.then(user => {
+        res.json('usario eliminado')
+    }).catch(err => {
+        res.status(400).json(err)
     })
 })
 
-
+// crear usario
 async function crearUsuario(body){
     let usuario = new Usuario({
         email : body.email,
@@ -43,6 +54,7 @@ async function crearUsuario(body){
     return await usuario.save();
 }
 
+//actualizar datos del usario
 async function actulizarUsuario(id, body){
 let usuario = await Usuario.findByIdAndUpdate(id, {
     $set: {
@@ -53,4 +65,13 @@ let usuario = await Usuario.findByIdAndUpdate(id, {
 }, {new: true});
 return usuario;
 }
+
+//Eliminar los datos de un usario
+async function eliminarUsario(id, body){
+    let usuario = await Usuario.deleteOne({_id: id});
+    }
+
+
+
 module.exports = ruta;
+
