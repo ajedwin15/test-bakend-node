@@ -44,6 +44,17 @@ ruta.delete('/:id', (req, res) => {
     })
 })
 
+//PATCH
+ruta.patch('/:id/active', (req, res) => {
+    let resultado = activarUsario(req.params.id, req.body);
+    resultado.then(user => {
+        res.json(user)
+    }).catch(err => {
+        res.status(400).json(err)
+    })
+})
+
+
 // crear usario
 async function crearUsuario(body){
     let usuario = new Usuario({
@@ -71,6 +82,15 @@ async function eliminarUsario(id, body){
     let usuario = await Usuario.deleteOne({_id: id});
     }
 
+//Activar usario
+async function activarUsario(id, body){
+    let usuario = await Usuario.findByIdAndUpdate(id, {
+        $set: {
+            estado: true
+        }
+    }, {new: true});
+    return usuario;
+    }
 
 
 module.exports = ruta;
