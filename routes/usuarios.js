@@ -6,7 +6,12 @@ const ruta = express.Router();
 
 // GET
 ruta.get('/',(req, res) => {
-    res.json('Listo Get de Usarios');
+    let resultado = listarUsario();
+    resultado.then(usuario => {
+        res.json(usuario)
+    }).catch(err => {
+        res.status(400).json(err);
+    })
 });
 
 //POST
@@ -89,6 +94,11 @@ async function activarUsario(id, body){
             estado: true
         }
     }, {new: true});
+    return usuario;
+    }
+//listarCursos activos
+async function listarUsario(){
+    let usuario = await Usuario.find({"estado": true});
     return usuario;
     }
 
