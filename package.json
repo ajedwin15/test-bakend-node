@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.1",
+    "joi": "^17.4.2",
     "mongoose": "^5.13.5",
     "mongose": "0.0.2-security",
     "mqtt": "^4.2.8"

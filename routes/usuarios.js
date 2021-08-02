@@ -1,8 +1,16 @@
-const { json } = require('express');
 const express = require('express');
+const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
+const Joi = require('joi');
 const ruta = express.Router();
 
+
+const schema = Joi.object({
+    nombre: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(20)
+        .required()});
 
 // GET
 ruta.get('/',(req, res) => {
@@ -17,24 +25,34 @@ ruta.get('/',(req, res) => {
 //POST
 ruta.post('/', (req, res) => {
     let body = req.body;
-    let resultado = crearUsuario(body);
-    
-    resultado.then( user => {
-        res.json({
-            valor: user
-        })
-    }).catch( err => {
+    const {error, value}=schema.validate({nombre: body.nombre});
+    if(!error){
+        let resultado = crearUsuario(body);
+        resultado.then( user => {
+            res.json({
+                valor: user
+            })
+        }).catch( err => {
+            res.status(400).json({
+                eror: err
+            })
+        });
+    }else{
         res.status(400).json({
-            eror: err
+            error: error
         })
-    });
+    }
 });
 
 //PUT
 ruta.put('/:id', (req, res) => {
     let resultado = actulizarUsuario(req.params.id, req.body);
     resultado.then(user => {
-        res.json(user)
+        res.json({
+            nombre: user.nombre,
+            email: user.email,
+            estado: user.estado
+        })
     }).catch(err => {
         res.status(400).json(err)
     })
@@ -52,8 +70,12 @@ ruta.delete('/:id', (req, res) => {
 //PATCH
 ruta.patch('/:id/active', (req, res) => {
     let resultado = activarUsario(req.params.id, req.body);
-    resultado.then(user => {
-        res.json(user)
+    resultado.then(valor => {
+        res.json({
+            nombre: valor.nombre,
+            email: valor.email,
+            estado: valor.estado
+        })
     }).catch(err => {
         res.status(400).json(err)
     })
@@ -65,7 +87,7 @@ async function crearUsuario(body){
     let usuario = new Usuario({
         email : body.email,
         nombre : body.nombre,
-        password : body.password
+        password : bcrypt.hashSync(body.password, 10)
     });
     return await usuario.save();
 }
@@ -98,7 +120,8 @@ async function activarUsario(id, body){
     }
 //listarCursos activos
 async function listarUsario(){
-    let usuario = await Usuario.find({"estado": true});
+    let usuario = await Usuario.find({"estado": true})
+    .select({nombre:1, email:1, estado:1})
     return usuario;
     }
 
