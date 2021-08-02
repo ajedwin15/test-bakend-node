@@ -11,7 +11,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "mongoose": "^5.13.5",
-    "mongose": "0.0.2-security"
+    "mongose": "0.0.2-security",
+    "mqtt": "^4.2.8"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"
