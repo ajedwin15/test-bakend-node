@@ -7,9 +7,7 @@ const Joi = require('joi');
 const verificarToken = require('../middlewares/authorization');
 const ruta = express.Router();
 
-ruta.get('/api', (req, res) => {
-    res.send('Hola g.m')
-})
+
 
 const schema = Joi.object({
     name: Joi.string()
