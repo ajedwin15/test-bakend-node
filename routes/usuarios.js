@@ -1,20 +1,24 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
 const Joi = require('joi');
+const verificarToken = require('../middlewares/authorization');
 const ruta = express.Router();
 
 
 const schema = Joi.object({
-    nombre: Joi.string()
+    name: Joi.string()
         .alphanum()
         .min(3)
         .max(20)
         .required()});
 
 // GET
-ruta.get('/',(req, res) => {
-    let resultado = listarUsario();
+
+ruta.get('/',verificarToken, (req, res) => {
+    let resultado = listarJUGADORES();
     resultado.then(usuario => {
         res.json(usuario)
     }).catch(err => {
@@ -25,9 +29,9 @@ ruta.get('/',(req, res) => {
 //POST
 ruta.post('/', (req, res) => {
     let body = req.body;
-    const {error, value}=schema.validate({nombre: body.nombre});
+    const {error, value}=schema.validate({name: body.name});
     if(!error){
-        let resultado = crearUsuario(body);
+        let resultado = crearJUGADOR(body);
         resultado.then( user => {
             res.json({
                 valor: user
@@ -46,20 +50,16 @@ ruta.post('/', (req, res) => {
 
 //PUT
 ruta.put('/:id', (req, res) => {
-    let resultado = actulizarUsuario(req.params.id, req.body);
+    let resultado = actulizarJUGADOR(req.params.id, req.body);
     resultado.then(user => {
-        res.json({
-            nombre: user.nombre,
-            email: user.email,
-            estado: user.estado
-        })
+        res.json({ user})
     }).catch(err => {
         res.status(400).json(err)
     })
 })
 //DELETE
 ruta.delete('/:id', (req, res) => {
-    let resultado = eliminarUsario(req.params.id, req.body);
+    let resultado = eliminarJUGADOR(req.params.id, req.body);
     resultado.then(user => {
         res.json('usario eliminado')
     }).catch(err => {
@@ -69,12 +69,18 @@ ruta.delete('/:id', (req, res) => {
 
 //PATCH
 ruta.patch('/:id/active', (req, res) => {
-    let resultado = activarUsario(req.params.id, req.body);
+    let resultado = activarJUGADOR(req.params.id, req.body);
     resultado.then(valor => {
         res.json({
-            nombre: valor.nombre,
-            email: valor.email,
-            estado: valor.estado
+            name : body.name,
+            age : body.age,
+            squad_number: body.squad_number,
+            position: body.position,
+            nationality: body.nationality,
+            team: body.team,
+            league: body.league,
+            country: body.country,
+            email: body.email,
         })
     }).catch(err => {
         res.status(400).json(err)
@@ -83,34 +89,47 @@ ruta.patch('/:id/active', (req, res) => {
 
 
 // crear usario
-async function crearUsuario(body){
+async function crearJUGADOR(body){
     let usuario = new Usuario({
-        email : body.email,
-        nombre : body.nombre,
+        name : body.name,
+        age : body.age,
+        squad_number: body.squad_number,
+        position: body.position,
+        nationality: body.nationality,
+        team: body.team,
+        league: body.league,
+        country: body.country,
+        email: body.email,
         password : bcrypt.hashSync(body.password, 10)
     });
     return await usuario.save();
 }
 
 //actualizar datos del usario
-async function actulizarUsuario(id, body){
+async function actulizarJUGADOR(id, body){
 let usuario = await Usuario.findByIdAndUpdate(id, {
     $set: {
-        email : body.email,
-        nombre : body.nombre,
-        password : body.password
+        name : body.name,
+        age : body.age,
+        squad_number: body.squad_number,
+        position: body.position,
+        nationality: body.nationality,
+        team: body.team,
+        league: body.league,
+        country: body.country,
+        email: body.email
     }
 }, {new: true});
 return usuario;
 }
 
 //Eliminar los datos de un usario
-async function eliminarUsario(id, body){
+async function eliminarJUGADOR(id, body){
     let usuario = await Usuario.deleteOne({_id: id});
     }
 
 //Activar usario
-async function activarUsario(id, body){
+async function activarJUGADOR(id, body){
     let usuario = await Usuario.findByIdAndUpdate(id, {
         $set: {
             estado: true
@@ -119,9 +138,9 @@ async function activarUsario(id, body){
     return usuario;
     }
 //listarCursos activos
-async function listarUsario(){
+async function listarJUGADORES(){
     let usuario = await Usuario.find({"estado": true})
-    .select({nombre:1, email:1, estado:1})
+    .select({ name:1, age:1, squad_number: 1, position: 1, nationality: 1, team: 1, league: 1 , country: 1 , email: 1,  estado:1 })
     return usuario;
     }
 

@@ -1,0 +1,10 @@
+{
+    "nombre" : "API Rest Expres - LA ELECTRONIC CORP", 
+    "configDB":{
+
+    },
+    "configToken":{
+        "SEED": "secret",
+        "expiration": "24h"
+    }
+}
