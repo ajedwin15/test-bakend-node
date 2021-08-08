@@ -88,7 +88,7 @@ ruta.patch('/:id/active', (req, res) => {
 })
 
 
-// crear usario
+// create player
 async function crearJUGADOR(body){
     let usuario = new Usuario({
         name : body.name,
@@ -105,7 +105,7 @@ async function crearJUGADOR(body){
     return await usuario.save();
 }
 
-//actualizar datos del usario
+//create player data
 async function actulizarJUGADOR(id, body){
 let usuario = await Usuario.findByIdAndUpdate(id, {
     $set: {
@@ -123,12 +123,12 @@ let usuario = await Usuario.findByIdAndUpdate(id, {
 return usuario;
 }
 
-//Eliminar los datos de un usario
+//delete player data
 async function eliminarJUGADOR(id, body){
     let usuario = await Usuario.deleteOne({_id: id});
     }
 
-//Activar usario
+//activate player
 async function activarJUGADOR(id, body){
     let usuario = await Usuario.findByIdAndUpdate(id, {
         $set: {
@@ -137,7 +137,7 @@ async function activarJUGADOR(id, body){
     }, {new: true});
     return usuario;
     }
-//listarCursos activos
+//list of active players
 async function listarJUGADORES(){
     let usuario = await Usuario.find({"estado": true})
     .select({ name:1, age:1, squad_number: 1, position: 1, nationality: 1, team: 1, league: 1 , country: 1 , email: 1,  estado:1 })

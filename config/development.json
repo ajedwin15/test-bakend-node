@@ -1,7 +1,7 @@
 {
-    "nombre" : "API Rest Expres - LA ELECTRONIC CORP", 
+    "nombre" : "API Rest Expres - g.m", 
     "configDB":{
-        "HOST": "mongodb://localhost:27017/curisos"
+        "HOST": "mongodb://localhost:27017/jugadores"
     },
     "configToken":{
         "SEED": "secret",
