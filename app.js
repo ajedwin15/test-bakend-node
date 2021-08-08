@@ -19,6 +19,9 @@ app.use(express.urlencoded({extended: true}));
 app.use('/api/usarios', usuarios);
 app.use('/api/authorization', authorization)
 
+app.get('/', (req, res) => {
+    res.send('Hola g.m')
+})
 
 
 
